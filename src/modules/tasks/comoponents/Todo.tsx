@@ -11,16 +11,20 @@ interface ITodo {
 
 const Todo = () => {
   const initialTodos = () => JSON.parse(localStorage.getItem("tasks") || "[]");
+  const initialInprogress = () =>
+    JSON.parse(localStorage.getItem("inprogress") || "[]");
   const [todo, setTodo] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [todos, setTodos] = useState<ITodo[]>(initialTodos);
+  const [inProgress, setInProgress] = useState<ITodo[]>(initialInprogress);
   const [isIndex, setIsIndex] = useState<number>(0);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem("inprogress", JSON.stringify(inProgress));
+  }, [todos, inProgress]);
 
   const hanldeModal = (): void => {
     setIsModal(!isModal);
@@ -61,6 +65,19 @@ const Todo = () => {
     }
   };
 
+  const hanldeInProgress = (index: number): void => {
+    const newTodos: ITodo[] = [...todos];
+    // const newInProgress: ITodo[] = [
+    //   ...inProgress,
+    //   ...newTodos.splice(index, 1)
+    // ];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+    // setInProgress(newInProgress);
+
+    console.log(...inProgress);
+  };
+
   return (
     <>
       <Wrapper>
@@ -73,7 +90,7 @@ const Todo = () => {
                 <span>{val.text}</span>
                 <Menu>
                   <Ul>
-                    <Li>Inprogress</Li>
+                    <Li onClick={() => hanldeInProgress(index)}>Inprogress</Li>
                     <Li onClick={() => handleEditTodo(val, index)}>Edit</Li>
                     <Li onClick={() => handleDeleteTodo(index)}>Delete</Li>
                   </Ul>
@@ -146,6 +163,7 @@ const Wrapper = styled.div`
   padding: 2rem;
   flex-basis: 30%;
   border-radius: 0.3rem;
+  position: relative;
 `;
 
 const Title = styled.h2`
@@ -193,7 +211,7 @@ const Button = styled.button`
   background-color: #fff;
   color: #4a3fb3;
   border: 0.1rem solid #4a3fb3;
-  width: 100%;
+  width: 90%;
   padding: 1.2rem 0;
   cursor: pointer;
   border-radius: 0.3rem;
