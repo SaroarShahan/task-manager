@@ -1,22 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Menu from "../../common/Menu";
 import Modal from "../../common/Modal";
 
+interface ITodo {
+  text: string;
+  description: string;
+  completed: boolean;
+}
+
 const Todo = () => {
+  const initialTodos = () => JSON.parse(localStorage.getItem("tasks") || "[]");
   const [todo, setTodo] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [isModal, setIsModal] = useState<boolean>(false);
-  let el = document.getElementById("modal");
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [todos, setTodos] = useState<ITodo[]>(initialTodos);
+  const [isIndex, setIsIndex] = useState<number>(0);
 
-  const hanldeModal = () => {
-    setIsModal(true);
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(todos));
+  }, [todos]);
+
+  const hanldeModal = (): void => {
+    setIsModal(!isModal);
   };
 
-  const hide = () => {
-    setIsModal(false);
+  const handleTodo = (): void => {
+    handleAddTodo(todo, description);
+    setTodo("");
+    setDescription("");
+    hanldeModal();
   };
 
-  const handleTodo = () => {};
+  const handleAddTodo = (text: string, description: string): void => {
+    if (isEdit) {
+      const newTodos: ITodo[] = [...todos];
+      newTodos[isIndex] = { text, description, completed: false };
+      setTodos(newTodos);
+      setIsEdit(false);
+    } else {
+      const newTodos = [...todos, { text, description, completed: false }];
+      setTodos(newTodos);
+    }
+  };
+
+  const handleDeleteTodo = (index: number): void => {
+    const newTodos: ITodo[] = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
+  const handleEditTodo = (val: any, index: number): void => {
+    hanldeModal();
+    if (val) {
+      setTodo(val.text);
+      setDescription(val.description);
+      setIsEdit(true);
+      setIsIndex(index);
+    }
+  };
 
   return (
     <>
@@ -24,24 +67,73 @@ const Todo = () => {
         <Title>todo</Title>
 
         <List>
-          {/* <Item>
-          <div>
-            <ItemTitle>titel</ItemTitle>
-            <ItemDescription>dfasfdsaf asfd</ItemDescription>
-          </div>
-          <div>
-            <Menu>
-              <Ul>
-                <Li>Inprogress</Li>
-                <Li>Edit</Li>
-                <Li>Delete</Li>
-              </Ul>
-            </Menu>
-          </div>
-        </Item> */}
+          {todos.map((val, index) => (
+            <Item key={index}>
+              <ItemTitle>
+                <span>{val.text}</span>
+                <Menu>
+                  <Ul>
+                    <Li>Inprogress</Li>
+                    <Li onClick={() => handleEditTodo(val, index)}>Edit</Li>
+                    <Li onClick={() => handleDeleteTodo(index)}>Delete</Li>
+                  </Ul>
+                </Menu>
+              </ItemTitle>
+              <ItemDescription>{val.description}</ItemDescription>
+            </Item>
+          ))}
         </List>
-        <AddTodo onClick={hanldeModal}>Add Todo</AddTodo>
+        <Button onClick={hanldeModal}>Add Todo</Button>
       </Wrapper>
+
+      {isModal && (
+        <Modal
+          isActive={isModal}
+          toggle={hanldeModal}
+          headerTitle="Todo form"
+          renderFooter={() => (
+            <div className="renderFooter">
+              <div>
+                <p>
+                  <span className="required">*</span> is required.
+                </p>
+              </div>
+              <div style={{ width: "20%" }}>
+                <Button onClick={handleTodo}>Add Todo</Button>
+              </div>
+            </div>
+          )}
+          renderBody={() => (
+            <>
+              <form className="form">
+                <div className="form__group">
+                  <label className="form__label is--required" htmlFor="title">
+                    Title
+                  </label>
+                  <input
+                    className="form__input"
+                    type="text"
+                    id="title"
+                    value={todo}
+                    onChange={e => setTodo(e.target.value)}
+                  />
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="description">
+                    Description
+                  </label>
+                  <textarea
+                    className="form__textarea"
+                    id="description"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                  />
+                </div>
+              </form>
+            </>
+          )}
+        />
+      )}
     </>
   );
 };
@@ -64,16 +156,16 @@ const Title = styled.h2`
 const List = styled.div``;
 
 const Item = styled.div`
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 1.5rem;
-  align-items: center;
 `;
 
 const ItemTitle = styled.h3`
   margin-bottom: 0.3rem;
   font-size: 1.6rem;
   line-height: 2.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ItemDescription = styled.p`
@@ -95,7 +187,7 @@ const Li = styled.li`
   }
 `;
 
-const AddTodo = styled.button`
+const Button = styled.button`
   font-size: 1.6rem;
   font-weight: 700;
   background-color: #fff;

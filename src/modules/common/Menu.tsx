@@ -2,16 +2,22 @@ import React, { useState, useRef } from "react";
 import { MdMoreVert } from "react-icons/md";
 import styled from "styled-components";
 
-const Menu: React.FC = ({ children }) => {
+interface IProps {
+  isMenuHide?: boolean;
+  setIsMenuHide?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+const Menu: React.FC<IProps> = ({ children }) => {
   const [isMenu, setIsMenu] = useState(false);
   let dropdownMenu = useRef<HTMLDivElement>(null);
 
-  const showMenu = () => {
+  const showMenu = (): void => {
     setIsMenu(!isMenu);
     document.addEventListener("click", closeMenu);
   };
 
-  const closeMenu = (e: any) => {
+  const closeMenu = (e: any): void => {
     if (dropdownMenu.current && !dropdownMenu.current.contains(e.target)) {
       setIsMenu(false);
       document.removeEventListener("click", closeMenu);

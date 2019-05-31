@@ -54,3 +54,53 @@ ul {
   margin: 0;
   list-style: none;
 }
+
+.required {
+  color: #ea3d3d;
+}
+
+.form {
+  &__group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+  }
+  &__label {
+    font-size: 1.58rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+
+    &.is--required {
+      &::after {
+        content: "*";
+        vertical-align: middle;
+        line-height: 1;
+        color: #ea3d3d;
+      }
+    }
+  }
+  &__input,
+  &__textarea {
+    padding: 2rem;
+    border-radius: 0.3rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+
+    &:focus {
+      outline: none;
+    }
+  }
+  &__input {
+    height: 4rem;
+  }
+  &__textarea {
+    min-height: 20rem;
+    resize: vertical;
+  }
+}
+
+.renderFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
