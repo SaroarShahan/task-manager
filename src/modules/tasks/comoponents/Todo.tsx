@@ -1,14 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Menu from "../../common/Menu";
+import Modal from "../../common/Modal";
 
 const Todo = () => {
-  return (
-    <Wrapper>
-      <Title>todo</Title>
+  const [todo, setTodo] = useState<string>("");
+  const [isModal, setIsModal] = useState<boolean>(false);
+  let el = document.getElementById("modal");
 
-      <List>
-        <Item>
+  const hanldeModal = () => {
+    setIsModal(true);
+  };
+
+  const hide = () => {
+    setIsModal(false);
+  };
+
+  const handleTodo = () => {};
+
+  return (
+    <>
+      <Wrapper>
+        <Title>todo</Title>
+
+        <List>
+          {/* <Item>
           <div>
             <ItemTitle>titel</ItemTitle>
             <ItemDescription>dfasfdsaf asfd</ItemDescription>
@@ -22,39 +38,11 @@ const Todo = () => {
               </Ul>
             </Menu>
           </div>
-        </Item>
-        <Item>
-          <div>
-            <ItemTitle>titel</ItemTitle>
-            <ItemDescription>dfasfdsaf asfd</ItemDescription>
-          </div>
-          <div>
-            <Menu>
-              <Ul>
-                <Li>Inprogress</Li>
-                <Li>Edit</Li>
-                <Li>Delete</Li>
-              </Ul>
-            </Menu>
-          </div>
-        </Item>
-        <Item>
-          <div>
-            <ItemTitle>titel</ItemTitle>
-            <ItemDescription>dfasfdsaf asfd</ItemDescription>
-          </div>
-          <div>
-            <Menu>
-              <Ul>
-                <Li>Inprogress</Li>
-                <Li>Edit</Li>
-                <Li>Delete</Li>
-              </Ul>
-            </Menu>
-          </div>
-        </Item>
-      </List>
-    </Wrapper>
+        </Item> */}
+        </List>
+        <AddTodo onClick={hanldeModal}>Add Todo</AddTodo>
+      </Wrapper>
+    </>
   );
 };
 
@@ -104,5 +92,28 @@ const Li = styled.li`
   &:hover {
     color: #fff;
     background-color: #4a3fb3;
+  }
+`;
+
+const AddTodo = styled.button`
+  font-size: 1.6rem;
+  font-weight: 700;
+  background-color: #fff;
+  color: #4a3fb3;
+  border: 0.1rem solid #4a3fb3;
+  width: 100%;
+  padding: 1.2rem 0;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease-in-out 0s;
+
+  &:hover {
+    background-color: #4a3fb3;
+    color: #fff;
+  }
+
+  &:focus {
+    outline: none;
   }
 `;
