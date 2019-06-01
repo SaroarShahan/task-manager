@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import Menu from "../../common/Menu";
 import Modal from "../../common/Modal";
+import { Store } from "../../../store";
 
 interface ITodo {
   text: string;
@@ -10,6 +11,7 @@ interface ITodo {
 }
 
 const Todo = () => {
+  const { todos } = useContext(Store);
   const initialTodos = () => JSON.parse(localStorage.getItem("tasks") || "[]");
   const initialInprogress = () =>
     JSON.parse(localStorage.getItem("inprogress") || "[]");
@@ -17,7 +19,7 @@ const Todo = () => {
   const [description, setDescription] = useState<string>("");
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [todos, setTodos] = useState<ITodo[]>(initialTodos);
+  const [stateTodos, setStateTodos] = useState<ITodo[]>(todos);
   const [inProgress, setInProgress] = useState<ITodo[]>(initialInprogress);
   const [isIndex, setIsIndex] = useState<number>(0);
 
@@ -41,18 +43,18 @@ const Todo = () => {
     if (isEdit) {
       const newTodos: ITodo[] = [...todos];
       newTodos[isIndex] = { text, description, completed: false };
-      setTodos(newTodos);
+      setStateTodos(newTodos);
       setIsEdit(false);
     } else {
       const newTodos = [...todos, { text, description, completed: false }];
-      setTodos(newTodos);
+      setStateTodos(newTodos);
     }
   };
 
   const handleDeleteTodo = (index: number): void => {
     const newTodos: ITodo[] = [...todos];
     newTodos.splice(index, 1);
-    setTodos(newTodos);
+    setStateTodos(newTodos);
   };
 
   const handleEditTodo = (val: any, index: number): void => {
@@ -72,8 +74,8 @@ const Todo = () => {
     //   ...newTodos.splice(index, 1)
     // ];
     newTodos.splice(index, 1);
-    setTodos(newTodos);
-    // setInProgress(newInProgress);
+    setStateTodos(newTodos);
+    // setInProgress();
 
     console.log(...inProgress);
   };
@@ -116,7 +118,7 @@ const Todo = () => {
                 </p>
               </div>
               <div style={{ width: "20%" }}>
-                <Button onClick={handleTodo}>Add Todo</Button>
+                {/* <Button onClick={handleTodo}>Add Todo</Button> */}
               </div>
             </div>
           )}
